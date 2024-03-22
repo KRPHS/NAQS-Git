@@ -7,8 +7,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
   <script src="tool.js"></script>
   <script src="config.js"></script>
+  <script src="main.js"></script>
 </head>
 <body>
-  
+  <input type="file" id="inputExcel1" onchange="readExcel()">
+  <input type="button" value="데이터 확인" onclick="test('inputExcel1')">
+  <input type="button" value="데이터 출력" onclick="excelView('demo','inputExcel1')">
+  <div id="demo"></div>
 </body>
 </html>
