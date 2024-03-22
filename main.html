@@ -13,6 +13,8 @@
   <input type="file" id="inputExcel1" onchange="readExcel()">
   <input type="button" value="데이터 확인" onclick="test('inputExcel1')">
   <input type="button" value="데이터 출력" onclick="excelView('demo','inputExcel1')">
+  <input type="button" value="체크" onclick="check('inputExcel1')">
+  <input type="text" oninput="inputData(this)">
   <div id="demo"></div>
 </body>
 </html>
