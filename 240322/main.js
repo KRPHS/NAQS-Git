@@ -12,6 +12,10 @@ function check(obj) {
   // tableToExcel("demo", "파일이름");
 }
 
-function inputData() {
-  
+function inputData(value) {
+  let data = getData('inputExcel1');
+  if(value.value.length < 2) return;
+  data = keyWordFilter(data, "업소명", value.value);
+
+  arrayToTableView("demo", getHeader('inputExcel1'), data);
 }
