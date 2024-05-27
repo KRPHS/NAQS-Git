@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script>
+    let a1 = 5;
+    let a2 = 3;
+    let a3 = 8;
+    (a1+a3) * a2 * (a2+a3)
+
+    let result = sub(sub(plus(a1+a3), a2), plus(a2+a3));
+    console.log("a번째의 덧셈 값은"+plus(2,3));
+    console.log("b번째의 덧셈 값은"+plus(5,3));
+
+    function plus(num1,num2) {
+      console.log(`a번째의 덧셈 값은 ${num1+num2}`);
+      return num1+num2;
+    }
+    function sub(num1,num2) {
+      return num1*num2;
+    }
+  </script>
+</head>
+<body>
+  
+</body>
+</html>

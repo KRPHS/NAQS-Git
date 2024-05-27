@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script>
+    // 변수
+    // 이름 = 홍길동
+    let name = "asdfjkcjklvnoiankckvnlandklfnhlkasdnklffdsa";
+    console.log(name);
+    
+    name = "변경된 값";
+    console.log(name);
+
+    let num = 5;
+    let imsinum = "5";
+    console.log(num);
+    console.log(imsinum);
+
+    console.log(num + num); // 10
+    //           5  +  5  = 10
+    console.log(imsinum + imsinum); // 55
+    //             "5"   +   "5"   = 55
+
+    let a1 = 5;
+    let a2 = 7;
+    console.log(a1*3);
+    console.log(a2*3);
+    // ...
+
+
+    // 함수
+    // function 함수명() {
+
+    //}
+    
+    function test(inputNumber, inputNumber2) {
+      console.log(inputNumber * 3 / inputNumber2);
+    }
+
+    test(a1, a2);
+    test(5, 7);
+
+    // n * 3
+
+    function test1() {
+      console.log("test1함수가 호출됐습니다.");
+    }
+
+    test1();
+    test1();
+    test1();
+    test1();
+    test1();
+    test1();
+
+
+    let apple = 5; // 사과 개수
+    let cnt = 4;   // 사과에 개당 조각개수
+
+    function appleCal(apple, cnt) {
+      // console.log(apple * cnt);
+      return apple * cnt;
+    }
+
+    let appleReturn = appleCal(apple, cnt);
+    console.log(appleReturn);
+    console.log(appleCal(apple, cnt));
+    console.log(appleCal(appleCal(apple, cnt), appleCal(apple, cnt)));
+
+    // 값을 넘겨받는건 2개 num1, num2 변수를 만들고
+    // num1, num2를 받는 plus함수 안에서 더한다음에 그 값을 리턴해줄게요
+
+    function plus(num1, num2) {
+      return num1+num2;
+    }
+
+    let num3 = plus(5, 8);
+    console.log(num3);
+    console.log(plus(5, 8));
+
+
+    // 함수명은 sub num1,num2 리턴해줄값은 num1*num2*num1
+    function sub(num1,num2) {
+      return num1*num2*num1;
+    }
+
+    let sub1 = sub(8, 3);
+    console.log(sub1);
+    console.log(sub(8,3));
+
+
+    
+  </script>
+</head>
+<body>
+  
+</body>
+</html>

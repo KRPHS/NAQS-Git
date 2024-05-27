@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>계산기</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #ccc;
+    }
+
+    .calculator {
+      width: 320px;
+      background-color: #333;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .display {
+      background-color: #222;
+      color: #fff;
+      text-align: right;
+      padding: 20px;
+      font-size: 2em;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      word-wrap: break-word;
+      word-break: break-all;
+      min-height: 64px;
+    }
+
+    #previous-result {
+      font-size: 0.5em;
+      color: #aaa;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      padding: 5px;
+    }
+
+    .button {
+      background-color: #444;
+      border: 1px solid #555;
+      padding: 20px;
+      font-size: 1.5em;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .button.operator {
+      background-color: #f39c12;
+    }
+
+    .button.zero {
+      grid-column: span 2;
+    }
+
+    .button.equals {
+      grid-row: span 2;
+      background-color: #f39c12;
+    }
+
+    .button:hover {
+      background-color: #555;
+    }
+
+    .calculator {
+      position: relative;
+    }
+
+    .window-controls {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 20px;
+      display: flex;
+    }
+
+    .window-control {
+      width: 16px;
+      height: 16px;
+      margin: 2px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .window-control.minimize {
+      background-color: #f1c40f;
+    }
+
+    .window-control.maximize {
+      background-color: #2ecc71;
+    }
+
+    .window-control.close {
+      background-color: #e74c3c;
+    }
+
+    .window-control:hover {
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="calculator">
+    <div class="window-controls">
+      <div class="window-control minimize"></div>
+      <div class="window-control maximize"></div>
+      <div class="window-control close"></div>
+    </div>
+    <div class="display">
+      <div id="previous-result"></div>
+      <div id="current-input"></div>
+    </div>
+    <div class="buttons">
+      <button class="button" onclick="clearDisplay()">AC</button>
+      <button class="button" onclick="toggleSign()">+/-</button>
+      <button class="button" onclick="percentage()">%</button>
+      <button class="button operator" onclick="appendOperator('/')">÷</button>
+      <button class="button" onclick="appendNumber(7)">7</button>
+      <button class="button" onclick="appendNumber(8)">8</button>
+      <button class="button" onclick="appendNumber(9)">9</button>
+      <button class="button operator" onclick="appendOperator('*')">×</button>
+      <button class="button" onclick="appendNumber(4)">4</button>
+      <button class="button" onclick="appendNumber(5)">5</button>
+      <button class="button" onclick="appendNumber(6)">6</button>
+      <button class="button operator" onclick="appendOperator('-')">-</button>
+      <button class="button" onclick="appendNumber(1)">1</button>
+      <button class="button" onclick="appendNumber(2)">2</button>
+      <button class="button" onclick="appendNumber(3)">3</button>
+      <button class="button operator" onclick="appendOperator('+')">+</button>
+      <button class="button zero" onclick="appendNumber(0)">0</button>
+      <button class="button" onclick="appendDot()">.</button>
+      <button class="button equals" onclick="calculateResult()">=</button>
+    </div>
+    <div style="padding: 12px 12px;color: white;">
+      <b>요구사항</b>
+      <ol style="font-size: 13px;">
+        <li>키보드로 숫자를 입력할수 있게끔 변경</li>
+        <li>7번을 클릭시 숫자 8이 입력되는 오류 수정</li>
+        <li>덧셈을 해도 뺄셈이 되는 오류 수정</li>
+        <li>7,9 위치 변경</li>
+      </ol>
+    </div>
+  </div>
+  <script>
+    let currentInput = '';
+    let previousResult = '';
+    let resetInput = false;
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key >= '0' && event.key <= '9') {
+        appendNumber(event.key);
+      } else if (['+', '-', '*', '/'].includes(event.key)) {
+        appendOperator(event.key);
+      } else if (event.key === 'Enter') {
+        calculateResult();
+      } else if (event.key === '.') {
+        appendDot();
+      } else if (event.key === 'Backspace') {
+        deleteLast();
+      }
+    });
+
+    function appendNumber(number) {
+      if (resetInput) {
+        currentInput = number;
+        resetInput = false;
+      } else {
+        currentInput += number;
+      }
+      updateDisplay();
+    }
+
+    function appendOperator(operator) {
+      if (currentInput === '' && previousResult !== '') {
+        currentInput = previousResult;
+      }
+
+      if (currentInput === '' && previousResult === '') {
+        return; // prevent operator as first character
+      }
+
+      if (resetInput) {
+        resetInput = false;
+      }
+
+      if (['+', '-', '*', '/'].includes(currentInput.slice(-1))) {
+        currentInput = currentInput.slice(0, -1) + operator;
+      } else {
+        currentInput += operator;
+      }
+      updateDisplay();
+    }
+
+    function appendDot() {
+      if (resetInput) {
+        currentInput = '0.';
+        resetInput = false;
+      } else if (!currentInput.includes('.')) {
+        currentInput += '.';
+      }
+      updateDisplay();
+    }
+
+    function clearDisplay() {
+      currentInput = '';
+      previousResult = '';
+      resetInput = false;
+      updateDisplay();
+    }
+
+    function toggleSign() {
+      if (currentInput !== '') {
+        if (currentInput[0] === '-') {
+          currentInput = currentInput.slice(1);
+        } else {
+          currentInput = '-' + currentInput;
+        }
+        updateDisplay();
+      }
+    }
+
+    function percentage() {
+      if (currentInput !== '') {
+        currentInput = String(parseFloat(currentInput) / 100);
+        updateDisplay();
+      }
+    }
+
+    function deleteLast() {
+      if (resetInput) {
+        clearDisplay();
+      } else {
+        currentInput = currentInput.toString().slice(0, -1);
+        updateDisplay();
+      }
+    }
+
+    function calculateResult() {
+      try {
+        const result = eval(currentInput);
+        previousResult = currentInput + ' = ' + result;
+        currentInput = result.toString();
+        resetInput = true;
+      } catch {
+        previousResult = 'Error';
+        currentInput = '';
+        resetInput = true;
+      }
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      document.getElementById('current-input').innerText = currentInput;
+      document.getElementById('previous-result').innerText = previousResult;
+    }
+
+  </script>
+</body>
+
+</html>
