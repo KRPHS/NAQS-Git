@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>계산기</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #ccc;
+    }
+
+    .calculator-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .calculator {
+      width: 320px;
+      background-color: #333;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .display {
+      background-color: #222;
+      color: #fff;
+      text-align: right;
+      padding: 20px;
+      font-size: 2em;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      word-wrap: break-word;
+      word-break: break-all;
+      min-height: 64px;
+    }
+
+    .previous-result {
+      font-size: 0.5em;
+      color: #aaa;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      padding: 5px;
+    }
+
+    .button {
+      background-color: #444;
+      border: 1px solid #555;
+      padding: 20px;
+      font-size: 1.5em;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .button.operator {
+      background-color: #f39c12;
+    }
+
+    .button.zero {
+      grid-column: span 2;
+    }
+
+    .button.equals {
+      grid-row: span 2;
+      background-color: #f39c12;
+    }
+
+    .button:hover {
+      background-color: #555;
+    }
+
+    .window-controls {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 20px;
+      display: flex;
+    }
+
+    .window-control {
+      width: 16px;
+      height: 16px;
+      margin: 2px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .window-control.minimize {
+      background-color: #f1c40f;
+    }
+
+    .window-control.maximize {
+      background-color: #2ecc71;
+    }
+
+    .window-control.close {
+      background-color: #e74c3c;
+    }
+
+    .window-control:hover {
+      opacity: 0.7;
+    }
+
+    .toggle-switch {
+      position: absolute;
+      top: -50px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .toggle-switch input {
+      display: none;
+    }
+
+    .slider {
+      width: 40px;
+      height: 20px;
+      background-color: #ccc;
+      border-radius: 20px;
+      position: relative;
+      transition: 0.4s;
+    }
+
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background-color: #fff;
+      border-radius: 50%;
+      top: 1px;
+      left: 1px;
+      transition: 0.4s;
+    }
+
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+
+    input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+
+    .scientific-buttons {
+      display: none;
+    }
+
+    .scientific-buttons.show {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      padding: 5px;
+    }
+
+    .calculator-icon {
+      display: none;
+      cursor: pointer;
+      width: 50px;
+      height: 50px;
+      background-color: #333;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 1.5em;
+    }
+
+    .add-calculator-button {
+      margin: 20px;
+      padding: 10px 20px;
+      font-size: 1.2em;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .add-calculator-button:hover {
+      background-color: #45a049;
+    }
+
+    .payment-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: #fff;
+      border: 2px solid #333;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      z-index: 1000;
+    }
+
+    .payment-popup button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .payment-popup button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+
+<body>
+  <button class="add-calculator-button" onclick="addCalculator()">+ 계산기 추가</button>
+  <div class="calculator-container" id="calculator-container">
+    <!-- 계산기들이 여기에 추가됩니다 -->
+  </div>
+
+  <div class="payment-popup" id="payment-popup">
+    <h2>결제가 필요합니다</h2>
+    <p>계산기 버튼을 3회 이상 누르셨습니다. 계속 사용하려면 결제가 필요합니다.</p>
+    <button onclick="closePopup()">확인</button>
+  </div>
+
+  <script>
+    let calculatorCount = 0;
+    let buttonClickCount = 0;
+
+    function addCalculator() {
+      calculatorCount++;
+      const calcId = 'calc' + calculatorCount;
+      const iconId = 'icon' + calculatorCount;
+      const scientificId = 'scientific-buttons-' + calculatorCount;
+      const toggleId = 'toggle-scientific-' + calculatorCount;
+
+      const calculatorHtml = `
+        <div class="calculator" id="${calcId}">
+          <div class="window-controls">
+            <div class="window-control minimize"></div>
+            <div class="window-control maximize"></div>
+            <div class="window-control close" onclick="closeCalculator('${calcId}', '${iconId}')"></div>
+          </div>
+          <div class="toggle-switch">
+            <input type="checkbox" id="${toggleId}">
+            <label for="${toggleId}" class="slider"></label>
+          </div>
+          <div class="display">
+            <div class="previous-result" id="previous-result-${calculatorCount}"></div>
+            <div id="current-input-${calculatorCount}"></div>
+          </div>
+          <div class="scientific-buttons" id="${scientificId}">
+            <button class="button" onclick="appendOperator('${calcId}', 'sin(')">sin</button>
+            <button class="button" onclick="appendOperator('${calcId}', 'cos(')">cos</button>
+            <button class="button" onclick="appendOperator('${calcId}', 'tan(')">tan</button>
+            <button class="button" onclick="appendOperator('${calcId}', 'log(')">log</button>
+            <button class="button" onclick="appendOperator('${calcId}', 'sqrt(')">√</button>
+            <button class="button" onclick="appendOperator('${calcId}', '^')">^</button>
+            <button class="button" onclick="appendOperator('${calcId}', '(')">(</button>
+            <button class="button" onclick="appendOperator('${calcId}', ')')">)</button>
+          </div>
+          <div class="buttons">
+            <button class="button" onclick="handleButtonClick('${calcId}', 'clearDisplay')">AC</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'toggleSign')">+/-</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'percentage')">%</button>
+            <button class="button operator" onclick="handleButtonClick('${calcId}', 'appendOperator', '/')">÷</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'appendNumber', 7)">7</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'appendNumber', 8)">8</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'appendNumber', 9)">9</button>
+            <button class="button operator" onclick="handleButtonClick('${calcId}', 'appendOperator', '*')">×</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'appendNumber', 4)">4</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'appendNumber', 5)">5</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'appendNumber', 6)">6</button>
+            <button class="button operator" onclick="handleButtonClick('${calcId}', 'appendOperator', '-')">-</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'appendNumber', 1)">1</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'appendNumber', 2)">2</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'appendNumber', 3)">3</button>
+            <button class="button operator" onclick="handleButtonClick('${calcId}', 'appendOperator', '+')">+</button>
+            <button class="button zero" onclick="handleButtonClick('${calcId}', 'appendNumber', 0)">0</button>
+            <button class="button" onclick="handleButtonClick('${calcId}', 'appendDot')">.</button>
+            <button class="button equals" onclick="handleButtonClick('${calcId}', 'calculateResult')">=</button>
+          </div>
+        </div>
+        <div class="calculator-icon" style="display:none;" id="${iconId}" onclick="openCalculator('${calcId}', '${iconId}')">${calculatorCount}</div>
+      `;
+
+      const calculatorContainer = document.getElementById('calculator-container');
+      const newCalculator = document.createElement('div');
+      newCalculator.innerHTML = calculatorHtml;
+      calculatorContainer.appendChild(newCalculator);
+
+      document.getElementById(toggleId).addEventListener('change', function() {
+        const scientificButtons = document.getElementById(scientificId);
+        if (this.checked) {
+          scientificButtons.classList.add('show');
+        } else {
+          scientificButtons.classList.remove('show');
+        }
+      });
+    }
+
+    function handleButtonClick(calcId, action, value) {
+      buttonClickCount++;
+      if (buttonClickCount >= 3) {
+        showPopup();
+        return;
+      }
+
+      if (action === 'clearDisplay') {
+        clearDisplay(calcId);
+      } else if (action === 'toggleSign') {
+        toggleSign(calcId);
+      } else if (action === 'percentage') {
+        percentage(calcId);
+      } else if (action === 'appendOperator') {
+        appendOperator(calcId, value);
+      } else if (action === 'appendNumber') {
+        appendNumber(calcId, value);
+      } else if (action === 'appendDot') {
+        appendDot(calcId);
+      } else if (action === 'calculateResult') {
+        calculateResult(calcId);
+      }
+    }
+
+    function showPopup() {
+      document.getElementById('payment-popup').style.display = 'block';
+    }
+
+    function closePopup() {
+      buttonClickCount = 0;
+      document.getElementById('payment-popup').style.display = 'none';
+    }
+
+    let inputs = {};
+
+    function appendNumber(calc, number) {
+      if (!inputs[calc]) inputs[calc] = { currentInput: '', previousResult: '', resetInput: false };
+      const input = inputs[calc];
+
+      if (input.resetInput) {
+        input.currentInput = number;
+        input.resetInput = false;
+      } else {
+        input.currentInput += number;
+      }
+      updateDisplay(calc);
+    }
+
+    function appendOperator(calc, operator) {
+      if (!inputs[calc]) inputs[calc] = { currentInput: '', previousResult: '', resetInput: false };
+      const input = inputs[calc];
+
+      if (input.currentInput === '' && input.previousResult !== '') {
+        input.currentInput = input.previousResult;
+      }
+      if (input.currentInput === '' && input.previousResult === '') {
+        return; // prevent operator as first character
+      }
+      if (input.resetInput) {
+        input.resetInput = false;
+      }
+      if (['+', '-', '*', '/'].includes(input.currentInput.slice(-1))) {
+        input.currentInput = input.currentInput.slice(0, -1) + operator;
+      } else {
+        input.currentInput += operator;
+      }
+      updateDisplay(calc);
+    }
+
+    function appendDot(calc) {
+      if (!inputs[calc]) inputs[calc] = { currentInput: '', previousResult: '', resetInput: false };
+      const input = inputs[calc];
+
+      if (input.resetInput) {
+        input.currentInput = '0.';
+        input.resetInput = false;
+      } else if (!input.currentInput.includes('.')) {
+        input.currentInput += '.';
+      }
+      updateDisplay(calc);
+    }
+
+    function clearDisplay(calc) {
+      inputs[calc] = { currentInput: '', previousResult: '', resetInput: false };
+      updateDisplay(calc);
+    }
+
+    function toggleSign(calc) {
+      if (!inputs[calc]) inputs[calc] = { currentInput: '', previousResult: '', resetInput: false };
+      const input = inputs[calc];
+
+      if (input.currentInput !== '') {
+        if (input.currentInput[0] === '-') {
+          input.currentInput = input.currentInput.slice(1);
+        } else {
+          input.currentInput = '-' + input.currentInput;
+        }
+        updateDisplay(calc);
+      }
+    }
+
+    function percentage(calc) {
+      if (!inputs[calc]) inputs[calc] = { currentInput: '', previousResult: '', resetInput: false };
+      const input = inputs[calc];
+
+      if (input.currentInput !== '') {
+        input.currentInput = String(parseFloat(input.currentInput) / 100);
+        updateDisplay(calc);
+      }
+    }
+
+    function deleteLast(calc) {
+      if (!inputs[calc]) inputs[calc] = { currentInput: '', previousResult: '', resetInput: false };
+      const input = inputs[calc];
+
+      if (input.resetInput) {
+        clearDisplay(calc);
+      } else {
+        input.currentInput = input.currentInput.toString().slice(0, -1);
+        updateDisplay(calc);
+      }
+    }
+
+    function calculateResult(calc) {
+      if (!inputs[calc]) inputs[calc] = { currentInput: '', previousResult: '', resetInput: false };
+      const input = inputs[calc];
+
+      try {
+        const result = eval(input.currentInput.replace(/×/g, '*').replace(/÷/g, '/'));
+        input.previousResult = input.currentInput + ' = ' + result;
+        input.currentInput = result.toString();
+        input.resetInput = true;
+      } catch {
+        input.previousResult = 'Error';
+        input.currentInput = '';
+        input.resetInput = true;
+      }
+      updateDisplay(calc);
+    }
+
+    function updateDisplay(calc) {
+      const input = inputs[calc];
+      document.getElementById(`current-input-${calc.slice(4)}`).innerText = input.currentInput;
+      document.getElementById(`previous-result-${calc.slice(4)}`).innerText = input.previousResult;
+    }
+
+    function closeCalculator(calc, icon) {
+      document.getElementById(calc).style.display = 'none';
+      document.getElementById(icon).style.display = 'flex';
+    }
+
+    function openCalculator(calc, icon) {
+      document.getElementById(calc).style.display = 'block';
+      document.getElementById(icon).style.display = 'none';
+    }
+  </script>
+</body>
+
+</html>
