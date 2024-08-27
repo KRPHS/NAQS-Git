@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>운영</title>
+
+  <link rel="icon" href="data/img/icon.ico">
+
+  <script src="data/js/data.js"></script>
+  <script src="data/js/dataFunction.js"></script>
+  <script src="data/js/jquery.js"></script>
+  <script src="data/js/xlsxJS.js"></script>
+  <script src="data/js/readExcel.js"></script>
+  <script src="data/js/config.js"></script>
+  <link rel="stylesheet" href="data/css/main.css">
+  <link rel="stylesheet" href="data/css/sel1.css">
+  <link rel="stylesheet" href="data/css/sel2.css">
+  <script>
+    let main_sel_menu = "sel3";
+    const web_version = "240705";
+
+    document.addEventListener("DOMContentLoaded", function () {
+      for (let i = 0; i < 4; i++) {
+        let script = document.createElement("script");
+        script.src = `data/js/sel${i + 1}.js`;
+        script.onerror = function () {
+          console.log(`sel${i + 1}.js 로드 실패`);
+        }
+        document.head.appendChild(script);
+      }
+    });
+
+    window.addEventListener('scroll', function () {
+      if (window.scrollY == 0) {
+        $("#logo").css("animation", "logoB 0.2s forwards");
+      } else {
+        $("#logo").css("animation", "logoS 0.2s forwards");
+      }
+    });
+
+    function main_menu_select(sel_id) {
+      sel_id = sel_id.replace("menu_", "");
+
+      if (main_sel_menu == sel_id) return;
+
+      $('#demo').html('');
+      $('#' + sel_id).slideDown(500);
+      $('#menu_' + sel_id).addClass("menu_sel");
+      $('#menu_' + main_sel_menu).removeClass("menu_sel");
+      $('#' + main_sel_menu).slideUp(500);
+      main_sel_menu = sel_id;
+      titleRefresh();
+
+      if(sel_id == "sel4") sel4_getKeywordData();
+    }
+  </script>
+
+</head>
+
+<body>
+  <div class="main_header_background"></div>
+  <div class="container">
+    <div class="main_header">
+      <img id="logo" class="logo" src="data/img/충북지원CI.png" height="100%" onclick="location.href='main.html'">
+      <div class="main_menu_list">
+        <div class="main_menu_btn menu_sel" id="menu_sel3" onclick="main_menu_select(this.id)">(개인)교육일지 정리</div>
+        <div class="main_menu_btn" id="menu_sel4" onclick="main_menu_select(this.id)">키워드 관리</div>
+      </div>
+    </div>
+    <div class="view">
+      <!--===========================================================================-->
+      <div id="sel3" style="display: block;">
+        <span class="view_item_title">데이터 목록</span>
+        <br><br>
+        <div class="filebox">
+          <input class="upload-name" value="파일선택" disabled="disabled" style="width: 85%;">
+          
+          <label for="sel3_ExcelFile1">업로드</label>
+          <input type="file" id="sel3_ExcelFile1" class="upload-hidden" onchange="readExcel('sel3')" accept=".xls, .xlsx">
+        </div>
+
+        <div id="sel3_demo"></div>
+      </div>
+      <!--===========================================================================-->
+      <div id="sel4" style="display: none;">
+        <span class="view_item_title">키워드 관리</span>
+        <br><br>
+        <h3>팁</h3>
+        <p>키워드에 "키워드1?키워드2"입력시 키워드1 또는 키워드2가 포함된 모든 내용을 필터 (OR)</p>
+        <p>키워드에 "키워드1,키워드2"입력시 키워드1, 키워드2가 포함된 모든 내용을 필터 (AND)</p>
+        <p>인정시간은 분 단위로 입력 "900.120"처럼 "."입력시 뒤 숫자 120분짜리 교육이 있을시에는 무조건 인정, 120분 교육이 없을시에는 900분 이상의 교육을 들어야 인정</p>
+        <input type="button" value="키워드 기본 초기화" onclick="saveData('keyWordData', data_KeyWord_default);sel4_getKeywordData();">
+
+        <div id="sel4_demo"></div>
+        <div id="sel4_demo2"></div>
+      </div>
+      <br>
+      <div id="demo"></div>
+      <div id="demo2" style="display: none;"></div>
+    </div>
+  </div>
+
+  <div id="modal" style="display: none;">
+    <div id="modal_background" onclick="modal_close()" tit="클릭시 닫힙니다."></div>
+    <div id="modal_view">
+      <h2 id="modal_view_title"></h2>
+      <hr>
+      <div id="modal_view_content_box">
+        <div id="modal_view_content"></div>
+      </div>
+    </div>
+  </div>
+  <p class="container" style="text-align: center; margin-bottom: 10px;">(C) 2024 박흥순 all rights reserved.</p>
+</body>
+<script>
+  function titleRefresh() {
+    document.title = $("#menu_" + main_sel_menu).text() + " " + web_version;
+  }
+  titleRefresh();
+</script>
+
+</html>

@@ -1,0 +1,20 @@
+.point1 {
+    font-weight: bold;
+    color: red;
+    width: 393px;
+}
+.point2 {
+    font-weight: bold;
+    color: blue;
+    width: 393px;
+}
+.sel2result tr td {
+    text-align: left;
+}
+.sel2result {
+    width: 100%;
+}
+
+.radioLabelLine::after {
+    content: " |";
+}

@@ -1,0 +1,15 @@
+#tableHeader_sel1 {
+    position: sticky;
+    top: 140px;
+    background-color: white;
+}
+
+#tableHeader_sel1 > td {
+    border-bottom: 2px solid black;
+    padding: 0;
+}
+
+td {
+    text-align: center;
+    background-color: white;
+}

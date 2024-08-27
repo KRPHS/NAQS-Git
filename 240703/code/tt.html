@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- <div id="que">가이드<input type="checkbox" id="chk1" onclick="console.log(this.checked)"><label id="chk1_label" for="chk1"></label></div> -->
+  <div class="main_header_background"></div>
+  <div class="container">
+    <div class="main_header">
+      <span>로고</span>
+      <div class="main_menu_list">
+        <div class="main_menu_btn menu_sel" id="menu_sel1" onclick="main_menu_select(this.id)">교육일지 정리</div>
+        <div class="main_menu_btn" id="menu_sel2" onclick="main_menu_select(this.id)">교육일지 중복 확인</div>
+        <div class="main_menu_btn" id="menu_sel3" onclick="main_menu_select(this.id)">test</div>
+        <div class="main_menu_btn" id="menu_sel3" onclick="main_menu_select(this.id)">test2</div>
+      </div>
+    </div>
+    <div class="view">
+      <!--===========================================================================-->
+      <div id="sel1" style="display: block; text-align: left;" tit="test">
+        <span class="view_item_title">성명 목록</span>
+        <br><br>
+        <div class="filebox">
+          <input class="upload-name" value="파일선택" disabled="disabled" style="width: 85%; float: left;">
+
+          <label for="ex_filename2">업로드</label>
+          <input type="file" id="ex_filename2" class="upload-hidden" onchange='sel1_readTxt(this.files[0], "name")'
+            accept=".txt">
+        </div>
+        <br>
+        <textarea id="sel1_name_table" style="width: 400px;" rows="10" disabled placeholder="성명 미리 보기"></textarea><br>
+        <hr>
+        <span class="view_item_title">데이터 목록</span>
+        <br><br>
+        <div class="filebox">
+          <input class="upload-name" value="파일선택" disabled="disabled" style="width: 85%; float: left;">
+
+          <label for="ex_filename3">업로드</label>
+          <input type="file" id="ex_filename3" class="upload-hidden" onchange="readExcel('sel1')" accept=".xls, .xlsx">
+        </div>
+        <br>
+        <hr>
+        <input type="button" id="view_Btn" value="시간 미포함" style="float: right;" onclick="sel1_view()">
+        <br>
+
+        <div id="sel1_demo"></div>
+      </div>
+      <!--===========================================================================-->
+      <div id="sel2" style="display: none;">
+        <span class="view_item_title">필터 목록</span>
+        <br><br>
+        <div class="filebox">
+          <input class="upload-name" value="파일선택" disabled="disabled" style="width: 80%;">
+
+          <label for="sel2_inputFileName">업로드</label>
+          <input type="file" id="sel2_inputFileName" class="upload-hidden" onchange='sel2_readTxt(this.files[0])'
+            accept=".txt">
+        </div>
+        <br>
+        <textarea id="sel2_txtView" style="width: 100%;" rows="10" disabled placeholder="필터 미리 보기"></textarea><br>
+
+        <br>
+        <span class="view_item_title">데이터 목록</span>
+        <br><br>
+        <div class="filebox">
+          <input class="upload-name" value="파일선택" disabled="disabled" style="width: 80%;">
+
+          <label for="sel2_ExcelFile1">업로드</label>
+          <input type="file" id="sel2_ExcelFile1" class="upload-hidden" onchange="readExcel('sel2')"
+            accept=".xls, .xlsx">
+        </div>
+        <br>
+        <div style="text-align: center;">민감도
+          <input type="radio" name="sel2_searchLevel" id="sel2_searchLevel1" value="8"
+            onclick="sel2_searchLevelCal(this.value)" checked><label class="radioLabelLine" for="sel2_searchLevel1">매우
+            낮게 (8글자)</label>
+          <input type="radio" name="sel2_searchLevel" id="sel2_searchLevel2" value="7"
+            onclick="sel2_searchLevelCal(this.value)"><label class="radioLabelLine" for="sel2_searchLevel2">조금 낮게
+            (7글자)</label>
+          <input type="radio" name="sel2_searchLevel" id="sel2_searchLevel3" value="6"
+            onclick="sel2_searchLevelCal(this.value)"><label class="radioLabelLine" for="sel2_searchLevel3">중간
+            (6글자)</label>
+          <input type="radio" name="sel2_searchLevel" id="sel2_searchLevel4" value="5"
+            onclick="sel2_searchLevelCal(this.value)"><label class="radioLabelLine" for="sel2_searchLevel4">조금 높게
+            (5글자)</label>
+          <input type="radio" name="sel2_searchLevel" id="sel2_searchLevel5" value="4"
+            onclick="sel2_searchLevelCal(this.value)"><label for="sel2_searchLevel5">매우 높게 (4글자)</label>
+        </div>
+
+        <div id="sel2_demo"></div>
+      </div>
+      <!--===========================================================================-->
+      <div id="sel3" style="display: none;">
+        <span class="view_item_title">Test 메뉴</span>
+        <p>키워드를 추가, 수정, 삭제할 수 있습니다.</p>
+        <input type="text" id="new_keyword" placeholder="키워드">
+        <input type="text" id="new_time" placeholder="시간">
+        <button onclick="addKeyword()">추가</button>
+        <table style="width: 100%; margin-top: 20px;">
+          <thead>
+            <tr>
+              <th>키워드</th>
+              <th>시간</th>
+              <th>작업</th>
+            </tr>
+          </thead>
+          <tbody id="keyword_table_body">
+            <!-- 키워드 목록이 여기에 표시됩니다. -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal" style="display: none;">
+    <div id="modal_background" onclick="modal_close()" tit="클릭시 닫힙니다."></div>
+    <div id="modal_view">
+      <h2 id="modal_view_title"></h2>
+      <hr>
+      <div id="modal_view_content_box">
+        <div id="modal_view_content"></div>
+      </div>
+    </div>
+  </div>
+  <p class="container" style="text-align: center; margin-bottom: 10px;">(C) 2024 박흥순 all rights reserved.</p>
+</body>
+</html>
