@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>재정</title>
+
+  <link rel="icon" href="data/img/icon.ico">
+
+  <script src="data/js/data.js"></script>
+  <script src="data/js/dataFunction.js"></script>
+  <script src="data/js/jquery.js"></script>
+  <script src="data/js/xlsxJS.js"></script>
+  <link rel="stylesheet" href="data/css/main.css">
+
+  <script>
+    const web_version = "240612";
+    let main_sel_menu = "sel1";
+
+    document.addEventListener("DOMContentLoaded", function () {
+      for (let i = 0; i < 3; i++) {
+        let script = document.createElement("script");
+        script.src = `data/js/sel${i + 1}.js`;
+        script.onerror = function () {
+          console.log(`sel${i + 1}.js 로드 실패`);
+        }
+        document.head.appendChild(script);
+      }
+    });
+
+    window.addEventListener('scroll', function () {
+      if (window.scrollY == 0) $("#logo").css("animation", "logoB 0.2s forwards");
+      else $("#logo").css("animation", "logoS 0.2s forwards");
+    });
+
+    $(document).ready(function () {
+      var fileTarget = $('.filebox .upload-hidden');
+
+      fileTarget.on('change', function () {
+        if (window.FileReader) var filename = $(this)[0].files[0].name;
+        else var filename = $(this).val().split('/').pop().split('\\').pop();  // 파일명만 추출
+        $(this).siblings('.upload-name').val(filename);
+      });
+    });
+
+    function main_menu_select(sel_id) {
+      sel_id = sel_id.replace("menu_", "");
+
+      if (main_sel_menu == sel_id) return;
+
+      $('#demo').html('');
+      $('#' + sel_id).slideDown(500);
+      $('#menu_' + sel_id).addClass("menu_sel");
+      $('#menu_' + main_sel_menu).removeClass("menu_sel");
+      $('#' + main_sel_menu).slideUp(500);
+      main_sel_menu = sel_id;
+      titleRefresh();
+      if (sel_id == "sel1") sel1_viewLocation();
+      if (sel_id == "sel3") sel3_getViewKm();
+    }
+  </script>
+</head>
+
+<body style="margin: 0; padding: 0;">
+  <div class="main_header_background"></div>
+  <div class="container">
+    <div class="main_header">
+      <div style="position: fixed; top: 10px; right: 100px;"><a href="사용법.pdf" target="_blank"><span
+            class="view_item_title_que">?</span></a></div>
+      <img id="logo" class="logo" src="data/img/충북지원CI.png" height="100%">
+      <div class="main_menu_list">
+        <div class="main_menu_btn menu_sel" id="menu_sel1" onclick="main_menu_select(this.id)">출장 관리(A형)</div>
+        <div class="main_menu_btn" id="menu_sel3" onclick="main_menu_select(this.id)">상시표 수정</div>
+        <!-- <div class="main_menu_btn" id="menu_sel3" onclick="main_menu_select(this.id)">임시 2</div> -->
+      </div>
+    </div>
+    <div class="view">
+      <div id="sel1" style="display: block;">
+        <div class="sel1_block">
+          <!-- <input type="button" value="확인" onclick="test()"> -->
+          <span class="view_item_title">사무소 선택</span>
+          <br><br>
+          <div id="sel1_demo">
+            <!-- <select id="sel1_select_location" onchange="sel1_select_location(this)">
+              <option value="">선택</option>
+              <option>지원</option>
+              <option>음성</option>
+              <option>보은</option>
+              <option>제천단양</option>
+              <option>충주</option>
+              <option>진천</option>
+              <option>괴산증평</option>
+              <option>영동</option>
+              <option>옥천</option>
+            </select> -->
+          </div>
+          <div id="sel1_bunso" style="display: none;">
+            <input type="text" id="sel1_bunsoList" style="width: 300px; margin-top: 5px;"
+              placeholder="분소 직원 이름을 입력하세요. ex) 홍길동,김말숙">
+          </div>
+        </div>
+        <div class="sel1_block">
+          <span class="view_item_title">반납 운행일지</span>
+          <br><br>
+          <div class="filebox" style="width: 100%;">
+            <input class="upload-name" value="파일선택" disabled="disabled" style="width: 70%;">
+
+            <label for="sel1_filename1">업로드</label>
+            <input type="file" id="sel1_filename1" class="upload-hidden" onchange='readExcel("sel1", this)'
+              accept=".xls,.xlsx">
+          </div>
+        </div>
+        <div class="sel1_block">
+          <span class="view_item_title">상시 출장</span>
+          <br><br>
+          <div class="filebox" style="width: 100%;">
+            <input class="upload-name" value="파일선택" disabled="disabled" style="width: 70%;">
+
+            <label for="sel1_filename2">업로드</label>
+            <input type="file" id="sel1_filename2" class="upload-hidden" onchange='readExcel("sel1", this)'
+              accept=".xls,.xlsx">
+          </div>
+        </div>
+        <div class="sel1_block">
+          <span class="view_item_title">거리 계산기</span><br>
+          <input type="text" id="sel1_km_input" style="width: 300px;" placeholder="사무소 선택 후 ex) 오송,남이"
+            oninput="sel1_km_cal(this)" disabled>
+          <div id="sel1_km_cal_demo"></div>
+        </div>
+      </div>
+      <div id="sel3" style="display: none;">
+        <span class="view_item_title">상시 거리표 수정</span>
+        <br><br>
+        <input type="button" value="데이터 초기화" id="sel3_viewBtn" onclick="sel3_dataReset()">
+        <input type="button" value="키워드 데이터 다운로드" onclick="saveDataFile('kmData');">
+        <input type="button" value="키워드 데이터 불러오기" onclick="document.getElementById('loadDataFileInput').click();">
+        <input type="file" id="loadDataFileInput" oninput="loadDataFile(this.files[0], 'kmData')" style="display: none;" accept=".txt">
+        <div id="sel3_demo"></div>
+      </div>
+      <br>
+      <div id="demo"></div>
+      <div id="demo2" style="display: none;"></div>
+    </div>
+  </div>
+  <div id="modal" style="display: none;">
+    <div id="modal_background" onclick="modal_close()" tit="클릭시 닫힙니다."></div>
+    <div id="modal_view">
+      <h2 id="modal_view_title"></h2>
+      <hr>
+      <div id="modal_view_content_box">
+        <div id="modal_view_content"></div>
+      </div>
+    </div>
+  </div>
+  <p class="container" style="text-align: center; margin-bottom: 10px;">&copy; 2024 박흥순 all rights reserved.</p>
+</body>
+<script>
+  function titleRefresh() {
+    document.title = $("#menu_" + main_sel_menu).text() + " " + web_version;
+  }
+  function modal_close() {
+    $('#modal').css('display', 'none');
+  }
+  titleRefresh();
+</script>
+
+</html>

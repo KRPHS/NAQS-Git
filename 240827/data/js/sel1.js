@@ -108,34 +108,43 @@ function sel1_keyWordSearch(name, keyWord) {
  */
 function sel1_data_calc(searchKeyWordIn, okTime, data, type = null) {
   let andcnt = 0;
-  let searchKeyWord;
+  let searchKeyWord = []; // 배열로 초기화
   searchKeyWord[0] = searchKeyWordIn;
-  if (type == "and") {
+  
+  if (type === "and") {
     andcnt = searchKeyWordIn.split(",").length;
     searchKeyWord = searchKeyWordIn.split(",");
     console.log(`andcnt: ${andcnt}, type: ${type} keyword: ${searchKeyWord}`);
   }
   
   let okM = 0;
-  if (type != "and") {
+  if (type !== "and") {
     searchKeyWord = searchKeyWord[0];
-    if (data.제목.indexOf(searchKeyWord) != -1) {
-      okM = (data.인정시간 + "").indexOf(":") != -1 ? Number(isEmpty((data.인정시간 + "").split(":")[1])) + (Number(isEmpty((data.인정시간 + "").split(":")[0])) * 60) : Number(isEmpty(data.인정시간분)) + (Number(isEmpty(data.인정시간)) * 60);
-  
+    if (data.제목.indexOf(searchKeyWord) !== -1) {
+      okM = (data.인정시간 + "").indexOf(":") !== -1
+        ? Number(isEmpty((data.인정시간 + "").split(":")[1])) + (Number(isEmpty((data.인정시간 + "").split(":")[0])) * 60)
+        : Number(isEmpty(data.인정시간분)) + (Number(isEmpty(data.인정시간)) * 60);
+
       for (let i = 0; i < sel1_calData.get(data.성명).length; i++) {
         for (let j = 0; j < sel1_calData.get(data.성명)[i][3].length; j++) {
-          if (sel1_calData.get(data.성명)[i][3][j][""] == data[""] && sel1_calData.get(data.성명)[i][0].indexOf(searchKeyWord) != -1) return;
+          if (sel1_calData.get(data.성명)[i][3][j][""] === data[""] && sel1_calData.get(data.성명)[i][0].indexOf(searchKeyWord) !== -1) return;
         }
-        if (sel1_calData.get(data.성명)[i][0].indexOf(searchKeyWord) != -1) {
+        if (sel1_calData.get(data.성명)[i][0].indexOf(searchKeyWord) !== -1) {
           okM += Number(sel1_calData.get(data.성명)[i][2]);
           sel1_calData.get(data.성명)[i][2] = okM;
-          if (okTime.indexOf(".") == -1) {
-            if (sel1_calData.get(data.성명)[i][2] < okTime && sel1_calData.get(data.성명)[i][2] > 0) {sel1_calData.get(data.성명)[i][1] = "▲";}
-            else if (sel1_calData.get(data.성명)[i][2] >= okTime) {sel1_calData.get(data.성명)[i][1] = "O";}
+          if (okTime.indexOf(".") === -1) {
+            if (sel1_calData.get(data.성명)[i][2] < okTime && sel1_calData.get(data.성명)[i][2] > 0) {
+              sel1_calData.get(data.성명)[i][1] = "▲";
+            } else if (sel1_calData.get(data.성명)[i][2] >= okTime) {
+              sel1_calData.get(data.성명)[i][1] = "O";
+            }
           } else {
             let imsiArr = okTime.replaceAll(" ", "").split(".");
-            if (sel1_calData.get(data.성명)[i][2] < imsiArr[0] && sel1_calData.get(data.성명)[i][2] > 0 && sel1_calData.get(data.성명)[i][1] != "O") {sel1_calData.get(data.성명)[i][1] = "▲";}
-            else if (sel1_calData.get(data.성명)[i][2] >= imsiArr[0]) {sel1_calData.get(data.성명)[i][1] = "O";}
+            if (sel1_calData.get(data.성명)[i][2] < imsiArr[0] && sel1_calData.get(data.성명)[i][2] > 0 && sel1_calData.get(data.성명)[i][1] !== "O") {
+              sel1_calData.get(data.성명)[i][1] = "▲";
+            } else if (sel1_calData.get(data.성명)[i][2] >= imsiArr[0]) {
+              sel1_calData.get(data.성명)[i][1] = "O";
+            }
             if (imsiArr[1] == okM) sel1_calData.get(data.성명)[i][1] = "O";
           }
           sel1_calData.get(data.성명)[i][3].push(data);
@@ -143,22 +152,24 @@ function sel1_data_calc(searchKeyWordIn, okTime, data, type = null) {
       }
     }
   } else {
-    if (data.제목.indexOf(searchKeyWord[0]) != -1 && data.제목.indexOf(searchKeyWord[1]) != -1) {
-      okM = (data.인정시간 + "").indexOf(":") != -1 ? Number(isEmpty((data.인정시간 + "").split(":")[1])) + (Number(isEmpty((data.인정시간 + "").split(":")[0])) * 60) : Number(isEmpty(data.인정시간분)) + (Number(isEmpty(data.인정시간)) * 60);
+    if (data.제목.indexOf(searchKeyWord[0]) !== -1 && data.제목.indexOf(searchKeyWord[1]) !== -1) {
+      okM = (data.인정시간 + "").indexOf(":") !== -1
+        ? Number(isEmpty((data.인정시간 + "").split(":")[1])) + (Number(isEmpty((data.인정시간 + "").split(":")[0])) * 60)
+        : Number(isEmpty(data.인정시간분)) + (Number(isEmpty(data.인정시간)) * 60);
 
       for (let i = 0; i < sel1_calData.get(data.성명).length; i++) {
         for (let j = 0; j < sel1_calData.get(data.성명)[i][3].length; j++) {
-          if (sel1_calData.get(data.성명)[i][3][j][""] == data[""] && sel1_calData.get(data.성명)[i][0].indexOf(searchKeyWord) != -1) return;
+          if (sel1_calData.get(data.성명)[i][3][j][""] === data[""] && sel1_calData.get(data.성명)[i][0].indexOf(searchKeyWord) !== -1) return;
         }
-        if (sel1_calData.get(data.성명)[i][0].indexOf(searchKeyWord[0]) != -1 && sel1_calData.get(data.성명)[i][0].indexOf(searchKeyWord[1]) != -1) {
+        if (sel1_calData.get(data.성명)[i][0].indexOf(searchKeyWord[0]) !== -1 && sel1_calData.get(data.성명)[i][0].indexOf(searchKeyWord[1]) !== -1) {
           okM += Number(sel1_calData.get(data.성명)[i][2]);
           sel1_calData.get(data.성명)[i][2] = okM;
-          if (okTime.indexOf(".") == -1) {
+          if (okTime.indexOf(".") === -1) {
             if (sel1_calData.get(data.성명)[i][2] < okTime && sel1_calData.get(data.성명)[i][2] > 0) sel1_calData.get(data.성명)[i][1] = "▲";
             else if (sel1_calData.get(data.성명)[i][2] >= okTime) sel1_calData.get(data.성명)[i][1] = "O";
           } else {
             let imsiArr = okTime.replaceAll(" ", "").split(".");
-            if (sel1_calData.get(data.성명)[i][2] < imsiArr[0] && sel1_calData.get(data.성명)[i][2] > 0 && sel1_calData.get(data.성명)[i][1] != "O") sel1_calData.get(data.성명)[i][1] = "▲";
+            if (sel1_calData.get(data.성명)[i][2] < imsiArr[0] && sel1_calData.get(data.성명)[i][2] > 0 && sel1_calData.get(data.성명)[i][1] !== "O") sel1_calData.get(data.성명)[i][1] = "▲";
             else if (sel1_calData.get(data.성명)[i][2] >= imsiArr[0]) sel1_calData.get(data.성명)[i][1] = "O";
             if (imsiArr[1] == okM) sel1_calData.get(data.성명)[i][1] = "O";
           }
@@ -169,6 +180,7 @@ function sel1_data_calc(searchKeyWordIn, okTime, data, type = null) {
     }
   }
 }
+
 
 /**
  * sel1_calData에 저장된 데이터와 키워드 조건에 따라 화면에 표 형식으로 데이터를 출력합니다.

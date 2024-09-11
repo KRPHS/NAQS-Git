@@ -101,7 +101,7 @@ function sel2_view() {
     str += ` < ` + searchCnt++ + ` > <b>` + data[0].성명 + `</b><br>`;
     str += `<table class='sel2result'><tr>`;
     str += `<td style='width: 110px;'>고번, 연계, 분</td>`;
-    str += `<td class='point1'>${data[0][""]} / ${data[0].구분} / ${okM12}분</td>`;
+    str += `<td class='point1'>${data[0][""]} / ${data[0].구분} / ${okM1}분</td>`;
     str += `<td class='point2'>${data[1][""]} / ${data[1].구분} / ${okM2}분</td>`;
     str += `</tr><tr>`;
     str += `<td>제목</td>`;
